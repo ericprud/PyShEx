@@ -48,6 +48,15 @@ _IRI_MEMBERS = {'id', 'predicate', 'datatype', 'start', 'valueExpr', 'inclusion'
                 'expression'}
 
 
+def _base_uri(loc: Optional[str]) -> Optional[str]:
+    """ A Windows filesystem path is not a legal IRI (drive letter, backslashes):
+    convert it to a file:/// URI before it is used as a document base.  POSIX paths
+    are legal IRI references and are left untouched. """
+    if loc and (re.match(r'^[A-Za-z]:[/\\]', loc) or loc.startswith('\\\\')):
+        return PureWindowsPath(loc).as_uri()
+    return loc
+
+
 def _absolutize_shexj(node, base: str) -> None:
     """ Resolve relative IRIs in a parsed ShExJ document against base (jsg's JSON loader,
     unlike the ShExC parser, has no notion of a document base). """
@@ -113,7 +122,7 @@ class SchemaLoader:
             self.root_location = None
         # Relative IRIs (including IMPORTs) resolve against the schema's canonical
         # location -- the original URL when a location redirect maps it to a local copy
-        self._source_base = self.canonical_location(source)
+        self._source_base = _base_uri(self.canonical_location(source))
         schema = self.loads(self.schema_text)
         return self.resolve_imports(schema, self._source_base)
 
