@@ -35,6 +35,9 @@ dynamic = ["version"]
 dependencies = [
     "cfgraph>=0.2.1",
     "chardet",
+    # direct pyjsg dependency exists only so [tool.uv.sources] can redirect it
+    # (uv sources apply to direct dependencies only); drop with the git sources
+    "pyjsg>=0.12.4",
     "pyshexc>=0.10.3",
     "rdflib-shim",
     "requests>=2.22.0",
@@ -104,4 +107,9 @@ commands = [
   ["codespell", "{posargs}"]
 ]
 [tool.uv.sources]
-pyshexc = { git = "https://github.com/ericprud/grammar-python-antlr-linkml.git", branch = "extends-shaperef" }
+# temporary git sources for the antlr-toolchain modernization:
+# - pyshexc: ShExDoc parser regenerated with current ANTLR 4.13.2
+# - pyjsg: antlr4-python3-runtime moved to a compiler extra (linkml/pyjsg#52)
+# repoint both to PyPI once released
+pyshexc = { git = "https://github.com/ericprud/grammar-python-antlr-linkml.git", branch = "antlr-4.13" }
+pyjsg = { git = "https://github.com/ericprud/pyjsg.git", branch = "antlr-extra" }

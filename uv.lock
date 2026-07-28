@@ -4,9 +4,12 @@ requires-python = ">=3.10"
 
 [[package]]
 name = "antlr4-python3-runtime"
-version = "4.9.3"
+version = "4.13.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/3e/38/7859ff46355f76f8d19459005ca000b6e7012f2f1ca597746cbcd1fbfe5e/antlr4-python3-runtime-4.9.3.tar.gz", hash = "sha256:f224469b4168294902bb1efa80a8bf7855f24c99aef99cbefc1bcd3cce77881b", size = 117034, upload-time = "2021-11-06T17:52:23.524Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/33/5f/2cdf6f7aca3b20d3f316e9f505292e1f256a32089bd702034c29ebde6242/antlr4_python3_runtime-4.13.2.tar.gz", hash = "sha256:909b647e1d2fc2b70180ac586df3933e38919c85f98ccc656a96cd3f25ef3916", size = 117467, upload-time = "2024-08-03T19:00:12.757Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/89/03/a851e84fcbb85214dc637b6378121ef9a0dd61b4c65264675d8a5c9b1ae7/antlr4_python3_runtime-4.13.2-py3-none-any.whl", hash = "sha256:fe3835eb8d33daece0e799090eda89719dbccee7aa39ef94eed3818cafa5a7e8", size = 144462, upload-time = "2024-08-03T19:00:11.134Z" },
+]
 
 [[package]]
 name = "certifi"
@@ -373,16 +376,11 @@ wheels = [
 
 [[package]]
 name = "pyjsg"
-version = "0.12.4"
-source = { registry = "https://pypi.org/simple" }
+version = "0.12.4.post1.dev0+6599f60"
+source = { git = "https://github.com/ericprud/pyjsg.git?branch=antlr-extra#6599f60bb91b7d22e684e8937e92462531dbaccf" }
 dependencies = [
-    { name = "antlr4-python3-runtime" },
     { name = "jsonasobj" },
     { name = "requests" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/c4/4e/192169ba1066454f016927fc46c7e595a6c701fd1173bd249efcf6de40b3/pyjsg-0.12.4.tar.gz", hash = "sha256:bb1c0ff1f50846d2b5185b182e28b0b6978eae51a2078ce3eb1e0f28dea7b9ab", size = 149852, upload-time = "2026-05-01T14:43:44.665Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/09/05/d129d016f5124adb882816bdaef44bb877e313ceb0a109abcf553f1ac90c/pyjsg-0.12.4-py3-none-any.whl", hash = "sha256:a57ae58bfd7192b32654a0024bc6462fb459d54e837f0b2b5cff0726aad2e557", size = 81728, upload-time = "2026-05-01T14:43:43.394Z" },
 ]
 
 [[package]]
@@ -400,6 +398,7 @@ source = { editable = "." }
 dependencies = [
     { name = "cfgraph" },
     { name = "chardet" },
+    { name = "pyjsg" },
     { name = "pyshexc" },
     { name = "rdflib-shim" },
     { name = "requests" },
@@ -419,7 +418,8 @@ dev = [
 requires-dist = [
     { name = "cfgraph", specifier = ">=0.2.1" },
     { name = "chardet" },
-    { name = "pyshexc", git = "https://github.com/ericprud/grammar-python-antlr-linkml.git?branch=extends-shaperef" },
+    { name = "pyjsg", git = "https://github.com/ericprud/pyjsg.git?branch=antlr-extra" },
+    { name = "pyshexc", git = "https://github.com/ericprud/grammar-python-antlr-linkml.git?branch=antlr-4.13" },
     { name = "rdflib-shim" },
     { name = "requests", specifier = ">=2.22.0" },
     { name = "shexjsg", specifier = ">=0.9.0" },
@@ -436,8 +436,8 @@ dev = [
 
 [[package]]
 name = "pyshexc"
-version = "0.10.3.post1.dev2+7e3a6b5"
-source = { git = "https://github.com/ericprud/grammar-python-antlr-linkml.git?branch=extends-shaperef#7e3a6b56de0bb55cce00827273083ca4e4886a92" }
+version = "0.10.3.post1.dev4+3f30f84"
+source = { git = "https://github.com/ericprud/grammar-python-antlr-linkml.git?branch=antlr-4.13#3f30f84772c508117a7c016f71b31325a02fdd4c" }
 dependencies = [
     { name = "antlr4-python3-runtime" },
     { name = "chardet" },
