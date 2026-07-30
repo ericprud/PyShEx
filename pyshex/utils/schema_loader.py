@@ -1,11 +1,24 @@
 import os
 import re
 from typing import cast, TextIO
+from urllib.request import urlopen
 
 from ShExJSG import ShExJ
 from pyjsg.jsglib import loads
 from pyshexc.parser_impl import generate_shexj
-from pyshexc.parser_impl.generate_shexj import load_shex_file
+
+
+def load_shex_text(location: str) -> str:
+    """ Read the ShExC or ShExJ source at location.  Both are UTF-8 by
+    definition, so decode directly rather than guessing at the encoding
+    (chardet confidently mis-sniffs some all-ASCII schemas as UTF-16). """
+    if '://' in location:
+        with urlopen(location) as response:
+            data = response.read()
+    else:
+        with open(location, 'rb') as f:
+            data = f.read()
+    return data.decode('utf-8-sig')
 
 
 class SchemaLoader:
@@ -31,7 +44,7 @@ class SchemaLoader:
         """
         if isinstance(schema_file, str):
             schema_file = self.location_rewrite(schema_file)
-            self.schema_text = load_shex_file(schema_file)
+            self.schema_text = load_shex_text(schema_file)
         else:
             self.schema_text = schema_file.read()
 

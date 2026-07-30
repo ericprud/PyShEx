@@ -100,6 +100,9 @@ def satisfiesShape(cntxt: Context, n: Node, S: ShExJ.Shape, c: DebugContext) -> 
             rslt = satisfiesShape(cntxt, n, S)
         rslt = rslt and consistent
 
+        if rslt and S.semActs is not None:
+            rslt = semActsSatisfied(S.semActs, cntxt)
+
         cntxt.evaluate_stack.pop()
     return rslt
 
@@ -179,7 +182,7 @@ def matches(cntxt: Context, T: RDFGraph, expr: ShExJ.tripleExpr, extras: set[URI
         return matchesExpr(cntxt, T, expr)
     else:
         return matchesCardinality(cntxt, T, expr, extras) \
-               and (expr.semActs is None or semActsSatisfied(expr.semActs, cntxt))
+               and (expr.semActs is None or semActsSatisfied(expr.semActs, cntxt, T))
 
 
 @trace_matches(True)

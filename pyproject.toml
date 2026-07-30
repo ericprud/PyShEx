@@ -47,6 +47,11 @@ dependencies = [
 [project.scripts]
 shexeval = "pyshex.shex_evaluator:evaluate_cli"
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# keep pytest out of the shexTest submodule's own test files
+norecursedirs = ["tests/data", ".venv"]
+
 [tool.uv-dynamic-versioning]
 vcs = "git"
 style = "pep440"

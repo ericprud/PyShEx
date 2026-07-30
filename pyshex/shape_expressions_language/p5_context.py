@@ -165,6 +165,9 @@ class Context:
         # Known results -- a cache of existing evaluation results
         self.known_results: dict[tuple[Node, ShExJ.shapeExprLabel], bool] = {}
 
+        # Arguments recorded by Test semantic actions (http://shex.io/extensions/Test/)
+        self.semact_prints: list[str] = []
+
         # Debugging options
         self.debug_context = DebugContext()
 
@@ -204,6 +207,7 @@ class Context:
         self.evaluating = set()
         self.assumptions = {}
         self.known_results = {}
+        self.semact_prints = []
         self.current_node = None
         self.evaluate_stack = []
         self.bnode_map = {}
@@ -218,7 +222,9 @@ class Context:
             abs_id = self._resolve_relative_uri(expr.id)
             if abs_id not in self.schema_id_map:
                 self.schema_id_map[abs_id] = expr
-        if isinstance(expr, (ShExJ.ShapeOr, ShExJ.ShapeAnd)):
+        if isinstance(expr, ShExJ.ShapeDecl):
+            self._gen_schema_xref(expr.shapeExpr)
+        elif isinstance(expr, (ShExJ.ShapeOr, ShExJ.ShapeAnd)):
             for expr2 in expr.shapeExprs:
                 self._gen_schema_xref(expr2)
         elif isinstance(expr, ShExJ.ShapeNot):
@@ -281,7 +287,9 @@ class Context:
             f(arg_cntxt, expr, self)
 
             # Traverse the expression and visit its components
-            if isinstance(expr, (ShExJ.ShapeOr, ShExJ.ShapeAnd)):
+            if isinstance(expr, ShExJ.ShapeDecl):
+                self.visit_shapes(expr.shapeExpr, f, arg_cntxt, visit_center, follow_inner_shapes=follow_inner_shapes)
+            elif isinstance(expr, (ShExJ.ShapeOr, ShExJ.ShapeAnd)):
                 for expr2 in expr.shapeExprs:
                     self.visit_shapes(expr2, f, arg_cntxt, visit_center, follow_inner_shapes=follow_inner_shapes)
             elif isinstance(expr, ShExJ.ShapeNot):

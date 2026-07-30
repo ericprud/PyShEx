@@ -33,7 +33,11 @@ def satisfies(cntxt: Context, n: Node, se: ShExJ.shapeExpr) -> bool:
           .. note:: Where is the documentation on recursion?  All I can find is
            `5.9.4 Recursion Example <http://shex.io/shex-semantics/#example-recursion>`_
           """
-    if isinstance(se, ShExJ.NodeConstraint):
+    if isinstance(se, ShExJ.ShapeDecl):
+        if isinstance(se.shapeExpr, ShExJ.ShapeExternal) and se.shapeExpr.id is None:
+            se.shapeExpr.id = se.id     # external resolution is keyed on the declaration's label
+        rval = satisfies(cntxt, n, se.shapeExpr)
+    elif isinstance(se, ShExJ.NodeConstraint):
         rval = satisfiesNodeConstraint(cntxt, n, se)
     elif isinstance(se, ShExJ.Shape):
         rval = satisfiesShape(cntxt, n, se)
