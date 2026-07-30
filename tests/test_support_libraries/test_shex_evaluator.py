@@ -58,3 +58,16 @@ def test_complete_constructor():
     assert results[1].focus == URIRef('http://www.wikidata.org/entity/Q18557112')
     assert results[1].start == URIRef('http://www.wikidata.org/entity/cancer')
     assert results[1].reason == '  Shape: http://www.wikidata.org/entity/cancer not found in Schema'
+
+def test_semact_prints():
+    """ Test extension output surfaces on EvaluationResult.semact_prints """
+    schema = """
+PREFIX ex: <http://ex.example/#>
+%<http://shex.io/extensions/Test/>{ print("startup") %}
+start = @ex:S
+ex:S { ex:p1 . %<http://shex.io/extensions/Test/>{ print(o) %} }
+"""
+    rdf = '<http://ex.example/#n1> <http://ex.example/#p1> "a\\\\b" .\n'
+    results = ShExEvaluator(rdf=rdf, schema=schema, focus="http://ex.example/#n1").evaluate()
+    assert results[0].result, results[0].reason
+    assert results[0].semact_prints == ("startup", "a\\b")

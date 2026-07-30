@@ -23,6 +23,8 @@ class EvaluationResult(NamedTuple):
     focus: URIRef | None
     start: URIRef | None
     reason: str | None
+    semact_prints: tuple[str, ...] = ()
+    """ Arguments recorded by Test semantic actions (http://shex.io/extensions/Test/) """
 
 
 # Handy types
@@ -252,7 +254,8 @@ class ShExEvaluator:
                     if not success:
                         self.nerrors += 1
                     if not evaluator.output_sink(EvaluationResult(success, focus, start_node,
-                                                                  '\n'.join(fail_reasons) if not success else '')):
+                                                                  '\n'.join(fail_reasons) if not success else '',
+                                                                  tuple(cntxt.semact_prints))):
                         processing = False
                         break
             else:
@@ -354,6 +357,8 @@ def evaluate_cli(argv: str | list[str] | None = None, prog: str | None = None) -
                                        print_results=opts.printsparqlresults, user_agent=opts.useragent).focus_nodes())
 
     def result_sink(rslt: EvaluationResult) -> bool:
+        for line in rslt.semact_prints:      # Test semantic-action output
+            print(line)
         if not rslt.result:
             if evaluator.nerrors == 1:
                 print("Errors:")
