@@ -129,7 +129,8 @@ class Context:
     def __init__(self, g: Graph | None, s: Schema,
                  external_shape_resolver: Callable[[ShExJ.IRIREF], ShExJ.Shape | None] | None = None,
                  base_namespace: Namespace | None = None,
-                 shape_importer: Callable[[ShExJ.IRIREF], ShExJ.Schema | None] | None = None) -> None:
+                 shape_importer: Callable[[ShExJ.IRIREF], ShExJ.Schema | None] | None = None,
+                 external_semact_code: dict[str, str] | None = None) -> None:
         """
         Create a context consisting of an RDF Graph and a ShEx Schema and generate a identifier to
         item map.
@@ -138,6 +139,7 @@ class Context:
         :param s: ShExJ Schema instance
         :param external_shape_resolver: External resolution function
         :param base_namespace:
+        :param external_semact_code: semantic-action name -> code for SemActs with no inline code
         """
         self.is_valid: bool = True
         self.error_list: list[str] = []
@@ -167,6 +169,8 @@ class Context:
 
         # Arguments recorded by Test semantic actions (http://shex.io/extensions/Test/)
         self.semact_prints: list[str] = []
+        # Externally supplied code for SemActs that carry none (e.g. sht:semActs test fixtures)
+        self.external_semact_code: dict[str, str] = external_semact_code or {}
 
         # Debugging options
         self.debug_context = DebugContext()

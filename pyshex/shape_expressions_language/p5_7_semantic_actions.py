@@ -38,11 +38,12 @@ def semActsSatisfied(acts: list[ShExJ.SemAct] | None, cntxt: Context, matched: R
 
 def evaluate_test_extension(act: ShExJ.SemAct, cntxt: Context, matched: RDFGraph | None) -> bool:
     """ Evaluate a single Test extension directive, recording its argument in cntxt.semact_prints """
-    if act.code is None:
-        return True                     # externally supplied code is not implemented
-    m = test_pattern.match(str(act.code))
+    code = act.code if act.code is not None else cntxt.external_semact_code.get(str(act.name))
+    if code is None:
+        return True                     # no code available for this action
+    m = test_pattern.match(str(code))
     if m is None:
-        cntxt.fail_reason = f"{TEST_EXTENSION}: invocation error on: {act.code}"
+        cntxt.fail_reason = f"{TEST_EXTENSION}: invocation error on: {code}"
         return False
     if m.group(2) is not None:
         # strip the delimiters, then decode the sanctioned escapes in a single pass
@@ -50,7 +51,7 @@ def evaluate_test_extension(act: ShExJ.SemAct, cntxt: Context, matched: RDFGraph
     else:
         triple = next(iter(matched), None) if matched is not None else None
         if triple is None:
-            cntxt.fail_reason = f"{TEST_EXTENSION}: no triple in scope for: {act.code}"
+            cntxt.fail_reason = f"{TEST_EXTENSION}: no triple in scope for: {code}"
             return False
         arg = str(triple[{"s": 0, "p": 1, "o": 2}[m.group(3)]])
     cntxt.semact_prints.append(arg)

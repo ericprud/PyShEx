@@ -107,6 +107,34 @@ class ShExManifestEntry:
         g.parse(data=data_ttl, format=fmt)
         return g
 
+    def semact_code_map(self) -> Dict[str, str]:
+        """ The external semantic-action code supplied by the entry's sht:semActs file --
+        a ShExC document whose startActs carry the name -> code assignments """
+        semacts = self._action_obj(SHT.semActs)
+        if semacts is None:
+            return {}
+        # resolve with the plain redirector: the schema_loader's suffix rewriting
+        # (.shex -> .json) must not apply to the .semact file
+        uri = str(self.owner.schema_uri(semacts))
+        if '://' in uri:
+            text = urlopen(uri).read().decode('utf-8-sig')
+        else:
+            with open(uri, 'rb') as semact_file:
+                text = semact_file.read().decode('utf-8-sig')
+        schema = SchemaLoader().loads(text)
+        return {} if schema is None or schema.startActs is None else \
+            {str(act.name): str(act.code) for act in schema.startActs if act.code is not None}
+
+    @property
+    def test_extension_prints(self) -> List[str]:
+        """ The ordered mf:prints expectations for the Test extension proper
+        (results for other extensions, e.g. Test/#a, are not compared) """
+        results = self.g.value(self.entryuri, MF.extensionResults)
+        if results is None:
+            return []
+        return [str(self.g.value(item, MF.prints)) for item in Collection(self.g, results)
+                if str(self.g.value(item, MF.extension)) == "http://shex.io/extensions/Test/"]
+
     @property
     def externs(self) -> List[URIRef]:
         externs = self._action_obj(SHT.shapeExterns)

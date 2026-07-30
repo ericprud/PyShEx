@@ -185,7 +185,8 @@ class ManifestEntryTestCase:
                 self.skip(me.name)
                 return False
 
-            cntxt = Context(g, s, me.extern_shape_for, base_namespace=BASE_FILE_LOC)
+            cntxt = Context(g, s, me.extern_shape_for, base_namespace=BASE_FILE_LOC,
+                            external_semact_code=me.semact_code_map())
             cntxt.debug_context.debug = DEBUG
             map_ = FixedShapeMap()
             focus = self.mfst.data_uri(me.focus)
@@ -198,11 +199,15 @@ class ManifestEntryTestCase:
             map_.add(ShapeAssociation(focus, ShExJ.IRIREF(me.shape) if me.shape else START))
 
             rslt = isValid(cntxt, map_)
-            test_result, reasons = rslt[0] == me.should_pass, rslt[1]
+            expected_prints = me.test_extension_prints
+            prints_ok = not expected_prints or cntxt.semact_prints == expected_prints
+            test_result, reasons = rslt[0] == me.should_pass and prints_ok, rslt[1]
 
             if not VERBOSE and not test_result:
                 print(f"Failed {me.name} ({'P' if me.should_pass else 'F'}): {me.schema_uri} - {me.data_uri}")
                 print(f"\t TRAITS: ({','.join(me.traits)})")
+                if not prints_ok:
+                    print(f"\t PRINTS: expected {expected_prints}, observed {cntxt.semact_prints}")
             if test_result:
                 self.pass_(me.name)
             else:
