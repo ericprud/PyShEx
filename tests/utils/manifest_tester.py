@@ -71,7 +71,8 @@ class ManifestEntryTestCase:
             # Data and focus IRIs must be real file URIs: a bare Windows path ("D:/...") is read as an
             # IRI with scheme "d:", which pyshex then rewrites, so the focus matched no data subject.
             cls.mfst.data_redirector = URIRedirector(URIRef(REMOTE_FILE_LOC), Path(BASE_FILE_LOC).as_uri() + '/')
-            cls.mfst.schema_redirector = cls.mfst.data_redirector
+            # Schemas keep plain paths: SchemaLoader.canonical_location maps them back to REMOTE_FILE_LOC
+            cls.mfst.schema_redirector = URIRedirector(URIRef(REMOTE_FILE_LOC), BASE_FILE_LOC)
 
         cls.started = not bool(START_AFTER)
         cls.npassed = 0
