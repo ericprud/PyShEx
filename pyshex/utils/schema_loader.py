@@ -1,12 +1,15 @@
+import codecs
 import os
 import re
 from pathlib import PureWindowsPath
 from typing import cast, TextIO
+from urllib import request
+
+import chardet
 
 from ShExJSG import ShExJ
 from pyjsg.jsglib import loads
 from pyshexc.parser_impl import generate_shexj
-from pyshexc.parser_impl.generate_shexj import load_shex_file
 
 
 def _base_uri(loc: str | None) -> str | None:
@@ -16,6 +19,25 @@ def _base_uri(loc: str | None) -> str | None:
     if loc and (re.match(r'^[A-Za-z]:[/\\]', loc) or loc.startswith('\\\\')):
         return PureWindowsPath(loc).as_uri()
     return loc
+
+
+def load_shex_file(shexfilename: str) -> str:
+    """ Read a ShEx file or URL, honoring a UTF-8 BOM and otherwise guessing the encoding.
+
+    Same as pyshexc.parser_impl.generate_shexj.load_shex_file, except that it falls back to
+    UTF-8 when chardet (>= 7) reports no encoding, instead of crashing in bytes.decode(None).
+    """
+    if '://' in shexfilename:
+        with request.urlopen(shexfilename) as response:
+            data = response.read()
+    else:
+        with open(shexfilename, 'rb') as inf:
+            data = inf.read()
+    if data.startswith(codecs.BOM_UTF8):
+        return data.decode('utf-8-sig')
+    result = chardet.detect(data)
+    encoding = result['encoding'] if result['encoding'] and float(result['confidence'] or 0) > 0.9 else 'UTF-8'
+    return data.decode(encoding)
 
 
 class SchemaLoader:

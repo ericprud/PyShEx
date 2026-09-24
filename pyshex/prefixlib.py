@@ -1,6 +1,6 @@
 import re
 
-from pyshexc.parser_impl.generate_shexj import load_shex_file
+from pyshex.utils.schema_loader import load_shex_file
 from rdflib import Namespace, Graph, RDF, RDFS, XSD, URIRef, __version__
 from rdflib.namespace import DOAP, FOAF, DC, DCTERMS, SKOS, OWL, XMLNS
 if __version__.startswith("5."):
