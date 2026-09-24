@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 
 import sys
 from ShExJSG import ShExJ
@@ -68,11 +67,8 @@ class ManifestEntryTestCase:
         if BASE_FILE_LOC != REMOTE_FILE_LOC:
             cls.mfst.schema_loader.base_location = REMOTE_FILE_LOC
             cls.mfst.schema_loader.redirect_location = BASE_FILE_LOC
-            # Data and focus IRIs must be real file URIs: a bare Windows path ("D:/...") is read as an
-            # IRI with scheme "d:", which pyshex then rewrites, so the focus matched no data subject.
-            cls.mfst.data_redirector = URIRedirector(URIRef(REMOTE_FILE_LOC), Path(BASE_FILE_LOC).as_uri() + '/')
-            # Schemas keep plain paths: SchemaLoader.canonical_location maps them back to REMOTE_FILE_LOC
-            cls.mfst.schema_redirector = URIRedirector(URIRef(REMOTE_FILE_LOC), BASE_FILE_LOC)
+            cls.mfst.data_redirector = URIRedirector(URIRef(REMOTE_FILE_LOC), BASE_FILE_LOC)
+            cls.mfst.schema_redirector = cls.mfst.data_redirector
 
         cls.started = not bool(START_AFTER)
         cls.npassed = 0
