@@ -6,9 +6,7 @@ from rdflib import URIRef
 class URIRedirector:
     def __init__(self, base: URIRef, target: str) -> None:
         self.base = base
-        # Forward slashes only: generate_base() uses them for the data graph's @base, so a
-        # Windows target with backslashes produced focus IRIs that matched no data subject.
-        self.target = target.replace('\\', '/')
+        self.target = target
 
     def uri_for(self, uri: URIRef) -> Union[URIRef, str]:
         unix_uri = str(uri).replace('\\', '/')
