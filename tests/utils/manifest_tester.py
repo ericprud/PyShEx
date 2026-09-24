@@ -160,6 +160,8 @@ class ManifestEntryTestCase:
             if not VERBOSE and not test_result:
                 print(f"Failed {me.name} ({'P' if me.should_pass else 'F'}): {me.schema_uri} - {me.data_uri}")
                 print(f"\t TRAITS: ({','.join(me.traits)})")
+                subjects = sorted({str(s) for s in g.subjects()})
+                print(f"\t FOCUS: {focus!r} {'in' if str(focus) in subjects else 'NOT in'} data subjects {subjects[:3]}")
             if test_result:
                 self.pass_(me.name)
             else:
