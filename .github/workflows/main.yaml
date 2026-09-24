@@ -1,6 +1,6 @@
 name: Test PyShEx
 env:
-  UV_VERSION: "0.7.13"
+  UV_VERSION: "0.12.18"
 on:
   push:
     branches:
