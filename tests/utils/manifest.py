@@ -2,7 +2,7 @@ from typing import List, Dict, Set, Union, Optional
 
 import os
 from ShExJSG import ShExJ
-from rdflib import Graph, ConjunctiveGraph, RDF, RDFS, URIRef, Namespace, Literal, BNode
+from rdflib import Graph, RDF, RDFS, URIRef, Namespace, Literal, BNode
 from urllib.request import urlopen
 
 from rdflib.collection import Collection
@@ -136,7 +136,7 @@ class ShExManifest:
         :param shex_format: Format of the ShEx files in the manifest. If None, use what the manifest says, otherwise
         replace '.shex' with shex_format
         """
-        self.g = ConjunctiveGraph()
+        self.g = Graph()
         self.g.parse(file_loc, format=manifest_format)
         self.entries: Dict[str, List[ShExManifestEntry]] = {}
         self.schema_loader = SchemaLoader()

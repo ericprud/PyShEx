@@ -4,7 +4,7 @@ import re
 
 def test_non_unicode() -> None:
     """String facets example 2: non-unicode escape pattern round-trips through JSON."""
-    b1 = '^\\t\\\\X\?$'
+    b1 = '^\\t\\\\X\\?$'
     b2 = r'^\t\\X\?$'
 
     assert b1 == b2
@@ -19,7 +19,7 @@ def test_non_unicode() -> None:
 
 def test_unicode() -> None:
     """String facets example 2: unicode character pattern round-trips through JSON."""
-    b1 = '^\\t\\\\𝒸\?$'
+    b1 = '^\\t\\\\𝒸\\?$'
     b2 = r'^\t\\𝒸\?$'
 
     assert b1 == b2
@@ -34,7 +34,7 @@ def test_unicode() -> None:
 
 def test_unicode_escape() -> None:
     """String facets example 2: unicode escape sequence pattern round-trips through JSON."""
-    b1 = '^\\t\\\\\U0001D4B8\?$'
+    b1 = '^\\t\\\\\U0001D4B8\\?$'
     b2 = r'^\t\\𝒸\?$'
 
     assert b1 == b2

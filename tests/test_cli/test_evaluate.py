@@ -34,7 +34,7 @@ class TestShexEvaluator(CLITestCase):
             except ArgParseExitException:
                 pass
         actual = re.sub('optional arguments:', 'options:',
-                        re.sub(';\n\s*', '; ', outf.getvalue().strip()))
+                        re.sub(';\n\\s*', '; ', outf.getvalue().strip()))
         assert help_text.strip() == actual
 
     def test_obs(self):
