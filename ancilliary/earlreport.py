@@ -72,7 +72,7 @@ class EARLPage:
         rslt = BNode()
         self.add(rslt, RDF.type, EARL.TestResult)\
             .add(rslt, EARL.outcome, EARL[status])\
-            .add(rslt, DC.date, Literal(datetime.datetime.utcnow().isoformat()))\
+            .add(rslt, DC.date, Literal(datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None).isoformat()))\
             .add(entry, EARL.result, rslt)
 
     def __str__(self) -> str:

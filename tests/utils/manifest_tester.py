@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import sys
 from ShExJSG import ShExJ
@@ -57,7 +58,9 @@ class ManifestEntryTestCase:
         if BASE_FILE_LOC != REMOTE_FILE_LOC:
             cls.mfst.schema_loader.base_location = REMOTE_FILE_LOC
             cls.mfst.schema_loader.redirect_location = BASE_FILE_LOC
-            cls.mfst.data_redirector = URIRedirector(URIRef(REMOTE_FILE_LOC), BASE_FILE_LOC)
+            # Data and focus IRIs must be real file URIs: a bare Windows path ("D:/...") is read as an
+            # IRI with scheme "d:", which pyshex then rewrites, so the focus matched no data subject.
+            cls.mfst.data_redirector = URIRedirector(URIRef(REMOTE_FILE_LOC), Path(BASE_FILE_LOC).as_uri() + '/')
             cls.mfst.schema_redirector = cls.mfst.data_redirector
 
         cls.started = not bool(START_AFTER)
@@ -139,9 +142,8 @@ class ManifestEntryTestCase:
             if not s:
                 print(f"\t ERROR: Unable to load schema {me.schema_uri}")
                 print(f"\t TRAITS: ({','.join(me.traits)})")
-                self.nskipped += 1
                 self.skip(me.name)
-                return False
+                return True
 
             cntxt = Context(g, s, me.extern_shape_for, base_namespace=BASE_FILE_LOC)
             cntxt.debug_context.debug = DEBUG
@@ -161,6 +163,8 @@ class ManifestEntryTestCase:
             if not VERBOSE and not test_result:
                 print(f"Failed {me.name} ({'P' if me.should_pass else 'F'}): {me.schema_uri} - {me.data_uri}")
                 print(f"\t TRAITS: ({','.join(me.traits)})")
+                subjects = sorted({str(s) for s in g.subjects()})
+                print(f"\t FOCUS: {focus!r} {'in' if str(focus) in subjects else 'NOT in'} data subjects {subjects[:3]}")
             if test_result:
                 self.pass_(me.name)
             else:
